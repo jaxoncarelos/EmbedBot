@@ -3,6 +3,7 @@ import discord
 import json
 import subprocess
 import re
+
 regex = {
     "twitter": r"https?://(?:www.)?twitter.com/.+/status(?:es)?/(\d+)(?:.+ )?",
     "tiktok": r"https?://(?:www.|vm.)?tiktok.com/.+(?: )?",
@@ -49,7 +50,7 @@ async def on_message(message):
         if should_download:
             if(os.path.isfile('output.mp4')):
                 os.remove('output.mp4')            
-            output = subprocess.run(["yt-dlp",                                   
+            subprocess.run(["yt-dlp",                                   
                             "-f", "bestvideo[filesize<6MB]+bestaudio[filesize<2MB]/best/bestvideo+bestaudio",
                             "-S", "vcodec:h264",
                             "--merge-output-format", "mp4",
@@ -58,6 +59,8 @@ async def on_message(message):
                             "--no-warnings", '-o', 'output.mp4', content])
             with open('output.mp4', 'rb') as file:
                 await message.reply(mention_author=False, file=discord.File(file, 'output.mp4'))
+            os.remove('output.mp4')
+
             
 
 client.run(config["BOT_TOKEN"])
