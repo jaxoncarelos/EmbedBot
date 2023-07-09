@@ -19,6 +19,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
+client.user.edit(username="ffmpreg")
 def is_valid_url(url):
     for i in regex:
         if re.match(regex[i], url):
