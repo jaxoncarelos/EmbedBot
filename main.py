@@ -19,7 +19,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
-client.user.edit(username="ffmpreg")
 def is_valid_url(url):
     for i in regex:
         if re.match(regex[i], url):
@@ -29,6 +28,7 @@ def is_valid_url(url):
 @client.event
 async def on_ready():
     await client.change_presence(status=discord.Status.invisible, activity=discord.Game(name="ffmpreg"))
+    await client.user.edit(username="ffmpreg")
     print(f'{client.user} has connected to Discord!')
 
 @client.event
