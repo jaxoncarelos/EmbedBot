@@ -42,9 +42,8 @@ async def on_message(message):
     should_download = False
     match is_valid:
         case "twitter":
-            output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', '--no-warnings', content], capture_output=True)
-            print(output)
-            await message.reply(output.stdout.decode('utf-8'))
+            output = content.replace('twitter','vxtwitter') + '.mp4'
+            await message.reply(mention_author=False, content=output)
         case "tiktok":
             should_download = True
         case "reddit":
