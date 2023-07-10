@@ -75,7 +75,7 @@ async def on_message(message):
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
-    await client.get_channel(1128015869117747280).send("Message sent in " + message.guild.name + "\n Output is " + output.stdout.decode('utf-8'))
+    await client.get_channel(1128015869117747280).send("Message sent in " + message.guild.name + "\n Output is \n" + output.stdout.decode('utf-8'))
 
             
 
