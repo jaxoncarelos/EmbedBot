@@ -41,6 +41,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     is_valid = is_valid_url(content)
+    print(content, should_be_spoiled)
     if not is_valid:
         return    
     should_download = False
