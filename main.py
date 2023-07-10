@@ -41,14 +41,14 @@ async def on_message(message):
     if message.author == client.user:
         return
     is_valid = is_valid_url(content)
-    print(content, should_be_spoiled)
     if not is_valid:
         return    
+    print(content, should_be_spoiled)
+    
     should_download = False
     match is_valid:
         case "twitter":
             output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', '--no-warnings', content], capture_output=True)
-            print(output.stdout.decode('utf-8'))
             await message.reply(mention_author=False, content= '||' + output.stdout.decode('utf-8') + '||' if should_be_spoiled else output.stdout.decode('utf-8'))
         case "tiktok":
             should_download = True
@@ -61,13 +61,14 @@ async def on_message(message):
         outPath = 'output.mp4' if not should_be_spoiled else 'SPOILER_output.mp4'
         if(os.path.isfile(outPath)):
             os.remove(outPath)            
-        subprocess.run(["yt-dlp",                                   
+        output = subprocess.run(["yt-dlp",                                   
                         "-f", "bestvideo[filesize<6MB]+bestaudio[filesize<2MB]/best/bestvideo+bestaudio",
                         "-S", "vcodec:h264",
                         "--merge-output-format", "mp4",
                         "--ignore-config",
                         "--no-playlist",
-                        "--no-warnings", '-o', outPath, content])
+                        "--no-warnings", '-o', outPath, content,
+                        ], capture_output=True)
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
