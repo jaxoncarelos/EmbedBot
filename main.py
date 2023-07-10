@@ -1,10 +1,12 @@
 import os
+from os.path import join, dirname
+from dotenv import load_dotenv
 import discord
-import json
 import subprocess
 import re
-import yt_dlp
-
+from dotenv import load_dotenv
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 regex = {
     "twitter": r"https?://(?:www.)?twitter.com/.+/status(?:es)?/(\d+)(?:.+ )?",
@@ -13,7 +15,6 @@ regex = {
     "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?"
 }
 
-config = json.load(open('config.json'))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -72,4 +73,4 @@ async def on_message(message):
 
             
 
-client.run(config["BOT_TOKEN"])
+client.run(os.environ.get("BOT_TOKEN"))
