@@ -46,7 +46,7 @@ async def on_message(message):
     if not is_valid:
         return    
     print(content, should_be_spoiled)
-    
+    output = None
     should_download = False
     match is_valid:
         case "twitter":
@@ -75,6 +75,7 @@ async def on_message(message):
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
+    await client.get_channel(1128015869117747280).send(output)
 
             
 
