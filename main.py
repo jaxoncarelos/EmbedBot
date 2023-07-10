@@ -34,8 +34,10 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    content = message.content
+    content: str = message.content
     should_be_spoiled = re.match(r"^\|{2}.*\|{2}$", content.lower()) is not None
+    if content.startswith("<") and content.endswith(">"):
+        content = content[1:-1]
     if should_be_spoiled:
         content = content[2:-2]
     if message.author == client.user:
@@ -69,6 +71,7 @@ async def on_message(message):
                         "--no-playlist",
                         "--no-warnings", '-o', outPath, content,
                         ], capture_output=True)
+        print(output)
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
