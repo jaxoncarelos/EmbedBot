@@ -43,7 +43,9 @@ async def on_message(message):
     content: str = message.content
     if message.author == client.user:
         return
-    
+    if content == "!pluh":
+        await message.reply(mention_author=False, file=discord.File("pluh!.mp3"))
+        return
     # Not feasible IMO, unless theres less than like 5 pages, its just a huge spam
 
     # print(content)
