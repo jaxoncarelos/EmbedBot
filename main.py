@@ -4,6 +4,10 @@ from dotenv import load_dotenv
 import discord
 import subprocess
 import re
+import pdf2image
+import requests
+from PIL import Image
+
 from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -12,9 +16,10 @@ regex = {
     "twitter": r"https?://(?:www.)?twitter.com/.+/status(?:es)?/(\d+)(?:.+ )?",
     "tiktok": r"https?://(?:www.|vm.)?tiktok.com/.+(?: )?",
     "reddit": r"https?://(?:(?:old.|www.)?reddit.com|v.redd.it)/.+(?: )?",
-    "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?"
+    "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?",
 }
-
+# Part of !pdf deprecated for now
+# urlRegex = r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -34,14 +39,42 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+
     content: str = message.content
+    if message.author == client.user:
+        return
+    
+    # Not feasible IMO, unless theres less than like 5 pages, its just a huge spam
+
+    # print(content)
+
+    # if content.startswith("!pdf"):
+    #     args = content.split(" ")
+    #     if len(args) < 2:
+    #         await message.reply(mention_author=False, content="Please provide a link")
+    #         return
+    #     if not re.match(urlRegex, args[1]):
+    #         await message.reply(mention_author=False, content="Please provide a valid link")
+    #         return
+    #     file = requests.get(args[1])
+    #     images = None
+
+    #     if int(file.headers['Content-length']) > 8000000:
+    #         await message.reply(mention_author=False, content="File too large")
+    #         return
+    #     images = pdf2image.convert_from_bytes(file.content)
+
+    #     for i in range(len(images)):
+    #         print(images[i].size)
+    #         images[i].save(f"output{i}.png", "PNG")
+            
+
+    #     return
     should_be_spoiled = re.match(r"^\|{2}.*\|{2}$", content.lower()) is not None
     if content.startswith("<") and content.endswith(">"):
         content = content[1:-1]
     if should_be_spoiled:
         content = content[2:-2]
-    if message.author == client.user:
-        return
     is_valid = is_valid_url(content)
     if not is_valid:
         return    
