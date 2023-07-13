@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 import discord
 import subprocess
 import re
-import pdf2image
-import requests
-from PIL import Image
+# import pdf2image
+# import requests
+# from PIL import Image
 
 from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
@@ -18,7 +18,7 @@ regex = {
     "reddit": r"https?://(?:(?:old.|www.)?reddit.com|v.redd.it)/.+(?: )?",
     "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?",
 }
-# Part of !pdf deprecated for now
+# Part of !pdf deprecated for
 # urlRegex = r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?"
 
 intents = discord.Intents.default()
