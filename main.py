@@ -51,7 +51,10 @@ async def on_message(message):
     match is_valid:
         case "twitter":
             output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', '--no-warnings', content], capture_output=True)
-            await message.reply(mention_author=False, content= '||' + output.stdout.decode('utf-8') + '||' if should_be_spoiled else output.stdout.decode('utf-8'))
+            if output.stdout.decode('utf-8').startswith("https://video.twimg.com"):  
+              await message.reply(mention_author=False, content= '||' + output.stdout.decode('utf-8') + '||' if should_be_spoiled else output.stdout.decode('utf-8'))
+            else:
+                await message.reply(mention_author=False, content="Error with video. Doesn't start with video.twimg.com")
         case "tiktok":
             should_download = True
         case "reddit":
