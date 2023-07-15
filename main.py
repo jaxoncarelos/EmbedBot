@@ -19,7 +19,7 @@ regex = {
     "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?",
 }
 # Part of !pdf deprecated for
-# urlRegex = r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?"
+urlRegex = r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -72,14 +72,10 @@ async def on_message(message):
             
 
     #     return
+    # thanks ds
+    content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content).group(0)
+    print(content)        
     
-    contentSplit = content.split(" ")
-    if len(contentSplit) > 1:
-        for i in contentSplit:
-            if is_valid_url(i):
-                content = i
-                break
-        
     should_be_spoiled = re.match(r"^\|{2}.*\|{2}$", content.lower()) is not None
     if content.startswith("<") and content.endswith(">"):
         content = content[1:-1]
