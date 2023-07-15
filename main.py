@@ -116,7 +116,7 @@ async def on_message(message):
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
-    await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output}", color=0x00ff00))
+    await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output.stdout.decode('utf-8')}, {output.returncode}", color=0x00ff00))
 
             
 
