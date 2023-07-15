@@ -72,17 +72,26 @@ async def on_message(message):
             
 
     #     return
+    
+    contentSplit = content.split(" ")
+    if len(contentSplit) > 1:
+        for i in contentSplit:
+            if is_valid_url(i):
+                content = i
+                break
+        
     should_be_spoiled = re.match(r"^\|{2}.*\|{2}$", content.lower()) is not None
     if content.startswith("<") and content.endswith(">"):
         content = content[1:-1]
     if should_be_spoiled:
         content = content[2:-2]
     is_valid = is_valid_url(content)
+
     if not is_valid:
         return    
-    print(content, should_be_spoiled)
     output = None
     should_download = False
+
     match is_valid:
         case "twitter":
             output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', '--no-warnings', content], capture_output=True)
