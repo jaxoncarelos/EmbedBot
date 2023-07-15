@@ -74,7 +74,6 @@ async def on_message(message):
     #     return
     # thanks ds
     content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content).group(0)
-    print(content)        
     
     should_be_spoiled = re.match(r"^\|{2}.*\|{2}$", content.lower()) is not None
     if content.startswith("<") and content.endswith(">"):
@@ -117,7 +116,7 @@ async def on_message(message):
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
-    await client.get_channel(1128015869117747280).send("Message sent in " + message.guild.name + "\n Output is \n" + output.stdout.decode('utf-8'))
+    await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output}", color=0x00ff00))
 
             
 
