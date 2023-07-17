@@ -78,7 +78,10 @@ async def on_message(message):
 
     #     return
     # thanks ds
-    content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content).group(0)
+    content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content)
+    if content is None:
+        return
+    content = content.group(0)
     
     should_be_spoiled = re.match(r"^\|{2}.*\|{2}$", content.lower()) is not None
     if content.startswith("<") and content.endswith(">"):
