@@ -1,6 +1,7 @@
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
+from discord import app_commands
 import discord
 import subprocess
 import re
@@ -25,16 +26,23 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
+tree = app_commands.CommandTree(client)
 def is_valid_url(url):
     for i in regex:
         if re.match(regex[i], url):
             return i
     return False
 
+
+@tree.command(name = "pluh", description = "Plays plug sounds")
+async def pluh(ctx):
+    await ctx.response.send_message(file=discord.File("pluh!.mp3"))
+
 @client.event
 async def on_ready():
     await client.change_presence(status=discord.Status.invisible, activity=discord.Game(name="ffmpreg"))
     await client.user.edit(username="ffmpreg")
+    await tree.sync()
     print(f'{client.user} has connected to Discord!')
 
 @client.event
@@ -42,9 +50,6 @@ async def on_message(message):
 
     content: str = message.content
     if message.author == client.user:
-        return
-    if content == "!pluh":
-        await message.reply(mention_author=False, file=discord.File("pluh!.mp3"))
         return
     # Not feasible IMO, unless theres less than like 5 pages, its just a huge spam
 
