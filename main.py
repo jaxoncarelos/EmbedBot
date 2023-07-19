@@ -52,7 +52,6 @@ async def on_message(message):
     if message.author == client.user:
         return
     # Not feasible IMO, unless theres less than like 5 pages, its just a huge spam
-
     # print(content)
 
     # if content.startswith("!pdf"):
@@ -121,6 +120,8 @@ async def on_message(message):
                         "--no-warnings", '-o', outPath, content,
                         ], capture_output=True)
         print(output)
+        if output.returncode != 0:
+            return
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
