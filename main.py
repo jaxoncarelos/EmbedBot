@@ -83,10 +83,10 @@ async def on_message(message):
     content = content.group(0)
     
     should_be_spoiled = re.match(r"^\|{2}.*\|{2}$", content.lower()) is not None
-    if content.startswith("<") and content.endswith(">"):
-        content = content[1:-1]
     if should_be_spoiled:
         content = content[2:-2]
+    if content.startswith("<") and content.endswith(">"):
+        content = content[1:-1]
     is_valid = is_valid_url(content)
 
     if not is_valid:
@@ -104,9 +104,9 @@ async def on_message(message):
             should_download = True
         case "reddit":
             should_download = True
-# LAGS TOO MUCH ON DISCORD RUNS TOO SLOW, MIGHT BE BETTER TO DOWNLOAD IT
-        case "instagram":
-            should_download = True
+        # doesnt work very consistently
+        # case "instagram":
+        #     should_download = True
     if should_download:
         outPath = 'output.mp4' if not should_be_spoiled else 'SPOILER_output.mp4'
         if(os.path.isfile(outPath)):
