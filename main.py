@@ -88,7 +88,7 @@ async def on_message(message):
     pattern = r"\|\|([^|]+)\|\||http[s]?:[^\}\{\|\\\^\~\[\]\`]+"
     matches = re.findall(pattern, content)
     if len(matches) > 0:
-        should_be_spoiled = True
+        # should_be_spoiled = True
 
     content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content)
 
