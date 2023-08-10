@@ -1,7 +1,7 @@
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
-from discord import app_commands
+from discord import Reaction, app_commands
 import discord
 import subprocess
 import re
@@ -24,6 +24,8 @@ urlRegex = r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.reactions = True
+
 
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
@@ -32,6 +34,7 @@ def is_valid_url(url):
         if re.match(regex[i], url):
             return i
     return False
+
 
 
 @tree.command(name = "pluh", description = "Plays plug sounds")
@@ -44,6 +47,7 @@ async def on_ready():
     await client.user.edit(username="ffmpreg")
     await tree.sync()
     print(f'{client.user} has connected to Discord!')
+
 
 @client.event
 async def on_message(message):
@@ -76,17 +80,22 @@ async def on_message(message):
             
 
     #     return
+
+
     # thanks ds
+    should_be_spoiled = False
+    
+    pattern = r"\|\|([^|]+)\|\||http[s]?:[^\}\{\|\\\^\~\[\]\`]+"
+    matches = re.findall(pattern, content)
+    if len(matches) > 0:
+        should_be_spoiled = True
+
     content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content)
+
     if content is None:
         return
     content = content.group(0)
-    
-    should_be_spoiled = re.match(r"^\|{2}.*\|{2}$", content.lower()) is not None
-    if should_be_spoiled:
-        content = content[2:-2]
-    if content.startswith("<") and content.endswith(">"):
-        content = content[1:-1]
+
     is_valid = is_valid_url(content)
 
     if not is_valid:
@@ -98,7 +107,7 @@ async def on_message(message):
         case "twitter":
             output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', '--no-warnings', content], capture_output=True)
             if output.stdout.decode('utf-8').startswith("https://video.twimg.com"):  
-              await message.reply(mention_author=False, content= '||' + output.stdout.decode('utf-8') + '||' if should_be_spoiled else output.stdout.decode('utf-8'))
+              await message.reply(mention_author=False, content= ('||' + output.stdout.decode('utf-8') + '||') if should_be_spoiled else output.stdout.decode('utf-8'))
 
         case "tiktok":
             should_download = True
