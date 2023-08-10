@@ -87,12 +87,10 @@ async def on_message(message):
     
     pattern = r"\|\|([^|]+)\|\||http[s]?:[^\}\{\|\\\^\~\[\]\`]+"
     matches = re.search(pattern, content)
-    print(matches)
     if matches is not None:
         if matches.group(0) is not None and matches.group(0).startswith("||"):
             should_be_spoiled = True
     content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content)
-    print(should_be_spoiled)
     if content is None:
         return
     content = content.group(0)
