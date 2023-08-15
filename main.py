@@ -90,6 +90,7 @@ async def on_message(message):
     if matches is not None:
         if matches.group(0) is not None and matches.group(0).startswith("||"):
             should_be_spoiled = True
+            
     content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content)
     if content is None:
         return
@@ -104,7 +105,7 @@ async def on_message(message):
 
     match is_valid:
         case "twitter":
-            output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', '--no-warnings', content], capture_output=True)
+            output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', "--cookies", "cookies.txt", content], capture_output=True)
             if output.stdout.decode('utf-8').startswith("https://video.twimg.com"):  
               await message.reply(mention_author=False, content= ('||' + output.stdout.decode('utf-8') + '||') if should_be_spoiled else output.stdout.decode('utf-8'))
 
@@ -122,6 +123,7 @@ async def on_message(message):
         output = subprocess.run(["yt-dlp",                                   
                         "-f", "bestvideo[filesize<6MB]+bestaudio[filesize<2MB]/best/bestvideo+bestaudio",
                         "-S", "vcodec:h264",
+                        "--cookies", os.environ.get("COOKIES"),
                         "--merge-output-format", "mp4",
                         "--ignore-config",
                         "--no-playlist",
