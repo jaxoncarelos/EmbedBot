@@ -123,7 +123,6 @@ async def on_message(message):
         output = subprocess.run(["yt-dlp",                                   
                         "-f", "bestvideo[filesize<6MB]+bestaudio[filesize<2MB]/best/bestvideo+bestaudio",
                         "-S", "vcodec:h264",
-                        "--cookies", os.environ.get("COOKIES"),
                         "--merge-output-format", "mp4",
                         "--ignore-config",
                         "--no-playlist",
