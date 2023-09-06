@@ -15,7 +15,7 @@ load_dotenv(dotenv_path)
 
 regex = {
     "twitter": r"https?://(?:www.)?twitter.com/.+/status(?:es)?/(\d+)(?:.+ )?",
-    "twitter": r"https?://(?:www.)?x.com/.+/status(?:es)?/(\d+)(?:.+ )?",
+    "x": r"https?://(?:www.)?x.com/.+/status(?:es)?/(\d+)(?:.+ )?",
     "tiktok": r"https?://(?:www.|vm.)?tiktok.com/.+(?: )?",
     "reddit": r"https?://(?:(?:old.|www.)?reddit.com|v.redd.it)/.+(?: )?",
     "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?",
@@ -105,7 +105,7 @@ async def on_message(message):
     should_download = False
 
     match is_valid:
-        case "twitter":
+        case "twitter" | 'x':
             output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', "--cookies", "cookies.txt", content], capture_output=True)
             if output.stdout.decode('utf-8').startswith("https://video.twimg.com"):  
               await message.reply(mention_author=False, content= ('||' + output.stdout.decode('utf-8') + '||') if should_be_spoiled else output.stdout.decode('utf-8'))
