@@ -104,19 +104,19 @@ async def on_message(message):
     output = None
     should_download = False
 
+    match is_valid:
+        case "twitter":
+            output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', "--cookies", "cookies.txt", content], capture_output=True)
+            if output.stdout.decode('utf-8').startswith("https://video.twimg.com"):  
+              await message.reply(mention_author=False, content= ('||' + output.stdout.decode('utf-8') + '||') if should_be_spoiled else output.stdout.decode('utf-8'))
 
-    if is_valid == "twitter":
-        output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', "--cookies", "cookies.txt", content], capture_output=True)
-        if output.stdout.decode('utf-8').startswith("https://video.twimg.com"):  
-            await message.reply(mention_author=False, content= ('||' + output.stdout.decode('utf-8') + '||') if should_be_spoiled else output.stdout.decode('utf-8'))
-
-    elif is_valid == "tiktok":
-        should_download = True
-    elif is_valid == "reddit":
-        should_download = True
-    # doesnt work very consistently
-    # case "instagram":
-    #     should_download = True
+        case "tiktok":
+            should_download = True
+        case "reddit":
+            should_download = True
+        # doesnt work very consistently
+        # case "instagram":
+        #     should_download = True
     if should_download:
         outPath = 'output.mp4' if not should_be_spoiled else 'SPOILER_output.mp4'
         if(os.path.isfile(outPath)):
