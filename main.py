@@ -15,6 +15,7 @@ load_dotenv(dotenv_path)
 
 regex = {
     "twitter": r"https?://(?:www.)?twitter.com/.+/status(?:es)?/(\d+)(?:.+ )?",
+    "twitter": r"https?://(?:www.)?x.com/.+/status(?:es)?/(\d+)(?:.+ )?",
     "tiktok": r"https?://(?:www.|vm.)?tiktok.com/.+(?: )?",
     "reddit": r"https?://(?:(?:old.|www.)?reddit.com|v.redd.it)/.+(?: )?",
     "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?",
