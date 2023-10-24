@@ -5,10 +5,6 @@ from discord import Reaction, app_commands
 import discord
 import subprocess
 import re
-# import pdf2image
-# import requests
-# from PIL import Image
-
 from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -53,44 +49,10 @@ async def on_ready():
 @client.event
 async def on_message(message):
 
-    content: str = message.content
+    content = message.content
     if message.author == client.user:
         return
-    # Not feasible IMO, unless theres less than like 5 pages, its just a huge spam
-    # print(content)
-
-    # if content.startswith("!pdf"):
-    #     args = content.split(" ")
-    #     if len(args) < 2:
-    #         await message.reply(mention_author=False, content="Please provide a link")
-    #         return
-    #     if not re.match(urlRegex, args[1]):
-    #         await message.reply(mention_author=False, content="Please provide a valid link")
-    #         return
-    #     file = requests.get(args[1])
-    #     images = None
-
-    #     if int(file.headers['Content-length']) > 8000000:
-    #         await message.reply(mention_author=False, content="File too large")
-    #         return
-    #     images = pdf2image.convert_from_bytes(file.content)
-
-    #     for i in range(len(images)):
-    #         print(images[i].size)
-    #         images[i].save(f"output{i}.png", "PNG")
-            
-
-    #     return
-
-
-    # thanks ds
-    should_be_spoiled = False
-    
-    pattern = r"\|\|([^|]+)\|\||http[s]?:[^\}\{\|\\\^\~\[\]\`]+"
-    matches = re.search(pattern, content)
-    if matches is not None:
-        if matches.group(0) is not None and matches.group(0).startswith("||"):
-            should_be_spoiled = True
+    should_be_spoiled = should_be_spoilered(content)
             
     content = re.search("(http[s]?:[^\}\{\|\\\^\~\[\]\`]+)", content)
     if content is None:
@@ -105,11 +67,10 @@ async def on_message(message):
     should_download = False
 
     match is_valid:
-        case "twitter" | 'x':
+        case "twitter" | "x":
             output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', "--cookies", "cookies.txt", content], capture_output=True)
             if output.stdout.decode('utf-8').startswith("https://video.twimg.com"):  
               await message.reply(mention_author=False, content= ('||' + output.stdout.decode('utf-8') + '||') if should_be_spoiled else output.stdout.decode('utf-8'))
-
         case "tiktok":
             should_download = True
         case "reddit":
@@ -136,6 +97,16 @@ async def on_message(message):
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
     await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output.stdout.decode('utf-8')}\nReturn code: {output.returncode}", color=0x00ff00))
+
+def should_be_spoilered(content):
+    pattern = r"\|\|([^|]+)\|\||http[s]?:[^\}\{\|\\\^\~\[\]\`]+"
+    should_be_spoiled = False
+    # regex where it checks if a url is surround with ||
+    matches = re.search(pattern, content)
+    if matches is not None:
+        if matches.group(0) is not None and matches.group(0).startswith("||"):
+            should_be_spoiled = True
+    return should_be_spoiled
 
             
 
