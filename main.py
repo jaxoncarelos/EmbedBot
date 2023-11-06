@@ -15,6 +15,7 @@ regex = {
     "tiktok": r"https?://(?:www.|vm.)?tiktok.com/.+(?: )?",
     "reddit": r"https?://(?:(?:old.|www.)?reddit.com|v.redd.it)/.+(?: )?",
     "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?",
+    "youtube": r"http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?"
 }
 # Part of !pdf deprecated for
 urlRegex = r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?"
@@ -37,6 +38,20 @@ def is_valid_url(url):
 @tree.command(name = "pluh", description = "Plays plug sounds")
 async def pluh(ctx):
     await ctx.response.send_message(file=discord.File("pluh!.mp3"))
+@tree.command(name="yt", description="Download youtube video")
+@app_commands.describe(link="Link to download")
+async def ytdl(interaction: discord.Interaction, link: str):
+    await interaction.response.defer(thinking=False)
+    if not is_valid_url(link) == "youtube":
+        await interaction.followup.send("Invalid url.")
+
+    output,outPath = download_video_file(link)
+    if output.returncode != 0:
+        return
+    
+    with open(outPath, 'rb') as file:
+        await interaction.followup.send(file=discord.File(file,outPath))
+    os.remove(outPath)
 
 @client.event
 async def on_ready():
@@ -79,10 +94,19 @@ async def on_message(message):
         # case "instagram":
         #     should_download = True
     if should_download:
-        outPath = 'output.mp4' if not should_be_spoiled else 'SPOILER_output.mp4'
-        if(os.path.isfile(outPath)):
-            os.remove(outPath)            
-        output = subprocess.run(["yt-dlp",                                   
+        output, outPath = download_video_file(content, should_be_spoiled)
+        if output.returncode != 0:
+            return
+        with open(outPath, 'rb') as file:
+            await message.reply(mention_author=False, file=discord.File(file, outPath))
+        os.remove(outPath)
+    await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output.stdout.decode('utf-8')}\nReturn code: {output.returncode}", color=0x00ff00))
+
+def download_video_file(content, should_be_spoiled=False):
+    outPath = 'output.mp4' if not should_be_spoiled else 'SPOILER_output.mp4'
+    if(os.path.isfile(outPath)):
+        os.remove(outPath)            
+    output = subprocess.run(["yt-dlp",                                   
                         "-f", "bestvideo[filesize<6MB]+bestaudio[filesize<2MB]/best/bestvideo+bestaudio",
                         "-S", "vcodec:h264",
                         "--merge-output-format", "mp4",
@@ -90,13 +114,8 @@ async def on_message(message):
                         "--no-playlist",
                         "--no-warnings", '-o', outPath, content,
                         ], capture_output=True)
-        print(output)
-        if output.returncode != 0:
-            return
-        with open(outPath, 'rb') as file:
-            await message.reply(mention_author=False, file=discord.File(file, outPath))
-        os.remove(outPath)
-    await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output.stdout.decode('utf-8')}\nReturn code: {output.returncode}", color=0x00ff00))
+    print(output)
+    return output,outPath
 
 def should_be_spoilered(content):
     pattern = r"\|\|([^|]+)\|\||http[s]?:[^\}\{\|\\\^\~\[\]\`]+"
