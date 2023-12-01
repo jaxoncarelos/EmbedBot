@@ -37,7 +37,6 @@ def is_valid_url(url):
 
 
 
-@tree.comand(name="retry", description="")
 @tree.command(name = "pluh", description = "Plays plug sounds")
 async def pluh(ctx):
     await ctx.response.send_message(file=discord.File("pluh!.mp3"))
