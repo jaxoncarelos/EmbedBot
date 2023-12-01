@@ -2,10 +2,8 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 from discord import Reaction, app_commands
-import requests
 import discord
 import subprocess
-from PIL import Image
 import re
 from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
