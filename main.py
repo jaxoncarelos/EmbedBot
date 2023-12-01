@@ -103,6 +103,9 @@ async def on_message(message: discord.Message):
     if should_download:
         output, outPath = download_video_file(content, should_be_spoiled)
         if output.returncode != 0:
+            with open('./lastError.log', 'w') as file:
+                file.write(output.stdout.decode(), "\n", output.stderr.decode() if output.stderr else "")
+            print(output.stdout.decode('utf-8'))
             await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link. There was an error, it was {output.stdout.decode('utf-8')}", color=0xff0000))
             return
         with open(outPath, 'rb') as file:
@@ -119,6 +122,7 @@ def download_video_file(content, should_be_spoiled=False):
                         "-S", "vcodec:h264",
                         "--merge-output-format", "mp4",
                         "--ignore-config",
+                        "--verbose",
                         "--no-playlist",
                         "--no-warnings", '-o', outPath, content,
                         ], capture_output=True)
