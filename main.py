@@ -2,8 +2,10 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 from discord import Reaction, app_commands
+import requests
 import discord
 import subprocess
+from PIL import Image
 import re
 from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
@@ -15,7 +17,9 @@ regex = {
     "tiktok": r"https?://(?:www.|vm.)?tiktok.com/.+(?: )?",
     "reddit": r"https?://(?:(?:old.|www.)?reddit.com|v.redd.it)/.+(?: )?",
     "instagram": r"https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_]+\/?(?:\?igshid=[a-zA-Z0-9_]+)?",
-    "youtube": r"http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?"
+    "youtube": r"http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?",
+    "urlRegex": r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?"
+
 }
 # Part of !pdf deprecated for
 urlRegex = r"(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?"
@@ -35,15 +39,14 @@ def is_valid_url(url):
 
 
 
+@tree.comand(name="retry", description="")
 @tree.command(name = "pluh", description = "Plays plug sounds")
 async def pluh(ctx):
     await ctx.response.send_message(file=discord.File("pluh!.mp3"))
 @tree.command(name="yt", description="Download youtube video")
 @app_commands.describe(link="Link to download")
 async def ytdl(interaction: discord.Interaction, link: str):
-    await interaction.response.defer(thinking=False)
-    if not is_valid_url(link) == "youtube":
-        await interaction.followup.send("Invalid url.")
+    await deferAndWrong('youtube', interaction, link)
 
     output,outPath = download_video_file(link)
     if output.returncode != 0:
@@ -52,6 +55,13 @@ async def ytdl(interaction: discord.Interaction, link: str):
     with open(outPath, 'rb') as file:
         await interaction.followup.send(file=discord.File(file,outPath))
     os.remove(outPath)
+
+async def deferAndWrong(typeOf, interaction, link):
+    await interaction.response.defer(thinking=False)
+    if not is_valid_url(link) == typeOf:
+        await interaction.followup.send("Invalid url.")
+        return False
+    return True
 
 @client.event
 async def on_ready():
@@ -62,7 +72,7 @@ async def on_ready():
 
 
 @client.event
-async def on_message(message):
+async def on_message(message: discord.Message):
 
     content = message.content
     if message.author == client.user:
@@ -96,6 +106,7 @@ async def on_message(message):
     if should_download:
         output, outPath = download_video_file(content, should_be_spoiled)
         if output.returncode != 0:
+            await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link. There was an error, it was {output.stdout.decode('utf-8')}", color=0xff0000))
             return
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
