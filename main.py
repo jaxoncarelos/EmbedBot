@@ -97,9 +97,9 @@ async def on_message(message: discord.Message):
             should_download = True
         case "instagram":
             # cheeky little cheat to get yt-dlp to download from ddinstagram which will return the same link as instagram without using auth
-            content = content.replace("instagram", "ddinstagram")
-            instagram = True
-            should_download = True
+            output = subprocess.run(["yt-dlp", "-g", "-f", "best", "--cookies", "cookies.txt", content], capture_output=True)
+            if "cdninstagram" in output.stdout.decode('utf-8'):
+                await message.reply(mention_author=False, content=('||' + "[video]("+output.stdout.decode()+")" + '||' if should_be_spoiled else "[video]("+output.stdout.decode()+")"))
     if should_download:
         output, outPath = download_video_file(content, should_be_spoiled)
         if output.returncode != 0:
