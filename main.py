@@ -70,7 +70,6 @@ async def on_ready():
 
 @client.event
 async def on_message(message: discord.Message):
-
     content = message.content
     if message.author == client.user:
         return
@@ -82,12 +81,11 @@ async def on_message(message: discord.Message):
     content = content.group(0)
 
     is_valid = is_valid_url(content)
-
+    instagram = False
     if not is_valid:
         return    
     output = None
     should_download = False
-
     match is_valid:
         case "twitter" | "x":
             output = subprocess.run(["yt-dlp", "-g", '-f', 'bestvideo[filesize<30MB]+bestaudio[filesize<10mb]/best/bestvideo+bestaudio', "--cookies", "cookies.txt", content], capture_output=True)
@@ -100,7 +98,7 @@ async def on_message(message: discord.Message):
         case "instagram":
             # cheeky little cheat to get yt-dlp to download from ddinstagram which will return the same link as instagram without using auth
             content = content.replace("instagram", "ddinstagram")
-            print(content)
+            instagram = True
             should_download = True
     if should_download:
         output, outPath = download_video_file(content, should_be_spoiled)
@@ -125,6 +123,7 @@ def download_video_file(content, should_be_spoiled=False):
                         "--merge-output-format", "mp4",
                         "--ignore-config",
                         "--verbose",
+                        "--cookies", "cookies.txt" if "instagram" in content else ""
                         "--no-playlist",
                         "--no-warnings", '-o', outPath, content,
                         ], capture_output=True)
