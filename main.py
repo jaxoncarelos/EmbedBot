@@ -105,14 +105,14 @@ async def on_message(message: discord.Message):
         output, outPath = download_video_file(content, should_be_spoiled)
         if output.returncode != 0:
             with open('./lastError.log', 'w') as file:
-                file.write(output.stdout.decode(), "\n", output.stderr.decode() if output.stderr else "")
+                file.write(f'{output.stdout.decode()}, "\n", {output.stderr.decode() if output.stderr else ""}')
             print(output.stdout.decode('utf-8'))
             await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link. There was an error, it was {output.stdout.decode('utf-8')}", color=0xff0000))
             return
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
-    await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output.stdout.decode('utf-8')}\nReturn code: {output.returncode}", color=0x00ff00))
+    await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output.stdout.decode('utf-8') if output else '.'}\nReturn code: {output.returncode}", color=0x00ff00))
 
 def download_video_file(content, should_be_spoiled=False):
     outPath = 'output.mp4' if not should_be_spoiled else 'SPOILER_output.mp4'
