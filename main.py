@@ -71,6 +71,9 @@ async def on_ready():
 @client.event
 async def on_message(message: discord.Message):
     content = message.content
+    if content.startswith('!!'):
+        print(f"Did no embed on {content}")
+        return
     if message.author == client.user:
         return
     should_be_spoiled = should_be_spoilered(content)
