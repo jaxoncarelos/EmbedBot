@@ -106,6 +106,9 @@ async def on_message(message: discord.Message):
     if should_download:
         output, outPath = download_video_file(content, should_be_spoiled)
         if output.returncode != 0:
+            output, outPath = download_video_file(content, should_be_spoilered)
+            if output.returncode == 0:
+                await message.reply(mention_author=False, file=discord.File(file, outPath))
             with open('./lastError.log', 'w') as file:
                 file.write(f'{output.stdout.decode()}, "\n", {output.stderr.decode() if output.stderr else ""}')
             print(output.stdout.decode('utf-8'))
