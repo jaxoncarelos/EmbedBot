@@ -118,6 +118,7 @@ async def on_message(message: discord.Message):
         with open(outPath, 'rb') as file:
             await message.reply(mention_author=False, file=discord.File(file, outPath))
         os.remove(outPath)
+    if not output: return
     await client.get_channel(1128015869117747280).send(embed=discord.Embed(title="ffmpreg", description=f"{message.author.mention} sent a {is_valid} link\n\n{output.stdout.decode('utf-8') if output else '.'}\nReturn code: {output.returncode}", color=0x00ff00))
 
 def download_video_file(content, should_be_spoiled=False):
